@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="API\**" />
+    <Compile Remove="DataAccess\**" />
+    <EmbeddedResource Remove="API\**" />
+    <EmbeddedResource Remove="DataAccess\**" />
+    <None Remove="API\**" />
+    <None Remove="DataAccess\**" />
+    <Page Remove="API\**" />
+    <Page Remove="DataAccess\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="DataAccess\DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
