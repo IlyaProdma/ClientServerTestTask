@@ -1,12 +1,16 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Net.Http.Json;
 
 namespace DataAccess
 {
     public class ApiClient
     {
         private HttpClient _client = new HttpClient();
+        private string? _username;
+        private string? _password;
+
+        public string? Username { get { return _username; }}
+        public string? Password { get { return _password; }}
 
         public ApiClient()
         {
@@ -16,18 +20,27 @@ namespace DataAccess
                 new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
+        public ApiClient(ApiClient other)
+        {
+            this._client = other._client;
+            this._username = other._username;
+            this._password = other._password;
+        }
+        
         public async Task<bool> CheckUserExistsAsync(string username) =>
             (await _client.GetAsync($"api/User/{username}")).IsSuccessStatusCode;
 
-        public async Task<bool> CheckPasswordCorrect(string username, string password)
+        public async Task<bool> CheckPasswordCorrectAsync(string username, string password)
         {
-            User user;
-            string path = $"api/User/{username}";
+            string path = $"/auth";
+            _client.DefaultRequestHeaders.Add("Authorization", $"{username}_{password}");
             HttpResponseMessage response = await _client.GetAsync(path);
+            _client.DefaultRequestHeaders.Remove("Authorization");
             if (response.IsSuccessStatusCode)
             {
-                user = JsonSerializer.Deserialize<User>(await response.Content.ReadAsStringAsync())!;
-                return (user!.login_.Equals(username) && user!.password_.Equals(password));
+                _username = username;
+                _password = password;
+                return true;
             }
             else
             {
@@ -35,12 +48,23 @@ namespace DataAccess
             }
         }
 
-        public async Task<bool> AddNewUser(string username, string password)
+        public async Task<List<Product>?> GetProductsAsync()
         {
-            string path = $"api/User";
-            HttpResponseMessage response =
-                await _client.PostAsJsonAsync(path, new User(username, password));
-            return response.IsSuccessStatusCode;
+            if (_username != null && _password != null)
+            {
+                string path = $"/api/Data/products";
+                HttpResponseMessage response = await _client.GetAsync(path);
+                if (response.IsSuccessStatusCode)
+                    return JsonSerializer
+                        .Deserialize<List<Product>>(
+                        await response.Content.ReadAsStringAsync())!;
+                else
+                    return null;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

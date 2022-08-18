@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace DataAccess
 {
     public static class DBMethods
     {
-        public static bool CheckUserExists(AppContext context, string login)
+        public static bool CheckUserExists(LoginContext context, string login)
         {
             using (context)
             {
@@ -19,7 +20,7 @@ namespace DataAccess
             }
         }
 
-        public static bool CheckPasswordCorrect(AppContext context, string login, string password)
+        public static bool CheckPasswordCorrect(LoginContext context, string login, string password)
         {
             using (context)
             {
@@ -31,28 +32,30 @@ namespace DataAccess
             }
         }
 
-        public static void AddNewUser(AppContext context, User user)
+        public static List<Product> GetProducts(DataContext context)
         {
             using (context)
             {
-                context.users.Add(user);
+                return (from products in context.products
+                       select products).ToList<Product>();
             }
         }
 
-        public static User? GetUserByLogin(AppContext context, string login)
+        public static Product GetProduct(DataContext context)
         {
             using (context)
             {
-                try
-                {
-                    var user = (from users in context.users
-                                where users.login_.Equals(login)
-                                select users).Take(1).First();
-                    return user;
-                } catch
-                {
-                    return null;
-                }
+                return (from products in context.products
+                        select products).First();
+            }
+        }
+
+        public static void AddProduct(DataContext context, Product product)
+        {
+            using (context)
+            {
+                context.Entry(product).State = EntityState.Added;
+                context.SaveChanges();
             }
         }
     }

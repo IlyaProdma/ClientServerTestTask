@@ -6,5 +6,7 @@
         xmlns:local="clr-namespace:ClientServerTestTask"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid/>
+    <StackPanel>
+        <DataGrid Height="100" AutoGenerateColumns="True" Name="DataTable"/>
+    </StackPanel>
 </Window>
