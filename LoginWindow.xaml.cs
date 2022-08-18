@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using ClientServerTestTask;
 using DataAccess;
 
 namespace UserApplication
@@ -45,40 +46,15 @@ namespace UserApplication
                         }
                         else
                         {
-                            MessageBox.Show("Ok");
+                            MainWindow window = new MainWindow(_client);
+                            window.Show();
+                            this.Close();
+                            return;
                         }
                     }
                 } catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
-
-        private async void btnReg_Click(object sender, RoutedEventArgs e)
-        {
-            if (CheckInputIsNotEmpty())
-            {
-                try
-                {
-                    if (await CheckUserExists() == true)
-                    {
-                        MessageBox.Show("Этот логин уже занят");
-                    }
-                    else
-                    {
-                        if (await AddNewUser() == true)
-                        {
-                            MessageBox.Show("Успешная регистрация");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Не удалось зарегистрировать");
-                        }
-                    }
-                } catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show("Error: " + ex.Message + "\n" + ex.StackTrace);
                 }
             }
         }
@@ -87,9 +63,6 @@ namespace UserApplication
             await _client.CheckUserExistsAsync(textUsername.Text);
 
         private async Task<bool> CheckPasswordCorrect() =>
-            await _client.CheckPasswordCorrect(textUsername.Text, textPassword.Password);
-
-        private async Task<bool> AddNewUser() =>
-            await _client.AddNewUser(textUsername.Text, textPassword.Password);
+            await _client.CheckPasswordCorrectAsync(textUsername.Text, textPassword.Password);
     }
 }

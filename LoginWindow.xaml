@@ -13,7 +13,6 @@
             <Label Content="Пароль:"/>
             <PasswordBox Name="textPassword"/>
             <Button Name="btnLogin" Click="btnLogin_Click" Content="Вход" Margin="50 10"/>
-            <Button Name="btnReg" Click="btnReg_Click" Content="Регистрация" Margin="50 5"/>
         </StackPanel>
     </Border>
 </Window>

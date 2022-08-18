@@ -1,6 +1,7 @@
 using DataAccess;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 
 namespace API.Controllers
 {
@@ -10,39 +11,30 @@ namespace API.Controllers
     {
         private readonly ILogger<User> _logger;
 
-        private readonly DataAccess.AppContext _context;
+        private readonly DataAccess.LoginContext _context;
 
-        public UserController(ILogger<User> logger)
+        public UserController(ILogger<User> logger, IAuthorizationService authorizationService)
         {
             _logger = logger;
-            _context = new DataAccess.AppContext();
+            _context = new DataAccess.LoginContext();
         }
 
-        [HttpGet("{login}", Name = "GetByLogin")]
-        public IActionResult GetByLogin(string login)
-        {
-            var user = DBMethods.GetUserByLogin(_context, login);
-            if (user == null)
-                return NotFound();
-            return new ObjectResult(user);
-        }
+        [HttpGet("{login}", Name = "CheckByLogin")]
+        public IActionResult CheckByLogin(string login) =>
+            DBMethods.CheckUserExists(_context, login) == true ? Ok(login) : NotFound();
 
-        [HttpPost(Name = "Post")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public IActionResult Post([FromBody] User user)
+        [HttpGet("/auth", Name = "Authorize")]
+        public IActionResult Authorize()
         {
-            try
+            if (Request.Headers.TryGetValue("Authorization", out StringValues authHeader))
             {
-                _context.Entry(user).State = EntityState.Added;
-                _context.SaveChanges();
-
-                return Ok(user);
-            } catch (Exception ex)
+                string strCreds = authHeader.First();
+                var creds = strCreds.Split('_');
+                return DBMethods.CheckPasswordCorrect(_context, creds[0], creds[1]) ? Ok() : Forbid("Wrong password");
+            }
+            else
             {
-                _logger.Log(LogLevel.Error, ex.Message);
-                if (ex.InnerException != null)
-                    _logger.Log(LogLevel.Error, ex.InnerException.Message);
-                return BadRequest(ex.Message);
+                return BadRequest("Missing Authorization Header.");
             }
         }
     }
