@@ -1,22 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
+    /// <summary>
+    /// Класс DbContext для работы с таблицей продуктов
+    /// </summary>
     public class DataContext : DbContext
     {
+        /// <summary>
+        /// Список продуктов из таблицы
+        /// </summary>
         public DbSet<Product> products { get; set; }
 
         public DataContext()
-        {
-            Database.EnsureCreated();
-
+        {            
         }
 
+        /// <summary>
+        /// Конфигурация подключения к Postgres
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=testtaskdb;Username=user_;Password=123");
