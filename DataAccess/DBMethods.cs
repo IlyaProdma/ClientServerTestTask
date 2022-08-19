@@ -7,11 +7,20 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
+
+    /// <summary>
+    /// Класс с функциями обращения к базе данных
+    /// </summary>
     public static class DBMethods
     {
-        public static bool CheckUserExists(LoginContext context, string login)
+        /// <summary>
+        /// Запрос на проверку наличия вводимого логина
+        /// </summary>
+        /// <param name="login">логин для проверки существования</param>
+        /// <returns></returns>
+        public static bool CheckUserExists(string login)
         {
-            using (context)
+            using (var context = new LoginContext())
             {
                 var user = from users in context.users
                            where users.login_.Equals(login)
@@ -20,9 +29,15 @@ namespace DataAccess
             }
         }
 
-        public static bool CheckPasswordCorrect(LoginContext context, string login, string password)
+        /// <summary>
+        /// Запрос на проверку пароля по данному пользователю
+        /// </summary>
+        /// <param name="login">Логин пользователя</param>
+        /// <param name="password">Код пароля</param>
+        /// <returns></returns>
+        public static bool CheckPasswordCorrect(string login, string password)
         {
-            using (context)
+            using (var context = new LoginContext())
             {
                 var user = from users in context.users
                            where users.login_.Equals(login)
@@ -32,30 +47,49 @@ namespace DataAccess
             }
         }
 
-        public static List<Product> GetProducts(DataContext context)
+        /// <summary>
+        /// Запрос на получение списка всех продуктов в таблице
+        /// </summary>
+        /// <returns>Список продуктов в таблице</returns>
+        public static List<Product> GetProducts()
         {
-            using (context)
+            using (var context = new DataContext())
             {
                 return (from products in context.products
                        select products).ToList<Product>();
             }
         }
 
-        public static Product GetProduct(DataContext context)
+        /// <summary>
+        /// Запрос на получение конкретного продукта по его артикулу
+        /// </summary>
+        /// <param name="vendor">артикул искомого продукта</param>
+        /// <returns>искомый продукт, если его артикул есть в базе</returns>
+        public static Product? GetProductByVendor(string vendor)
         {
-            using (context)
+            using (var context = new DataContext())
             {
-                return (from products in context.products
-                        select products).First();
+                var response = from products in context.products
+                               where products.vendor_.Equals(vendor)
+                               select products;
+                if (response.Count() > 0)
+                {
+                    return response.First();
+                }
+                return null;
             }
         }
 
-        public static void AddProduct(DataContext context, Product product)
+        /// <summary>
+        /// Запрос на добавление нового продукта
+        /// </summary>
+        /// <param name="product">Продукт для добавления</param>
+        public static void AddProduct(Product product)
         {
-            using (context)
+            using (var context = new DataContext())
             {
-                context.Entry(product).State = EntityState.Added;
-                context.SaveChanges();
+                    context.Entry(product).State = EntityState.Added;
+                    context.SaveChanges();
             }
         }
     }

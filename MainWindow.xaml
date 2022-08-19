@@ -7,6 +7,33 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <StackPanel>
-        <DataGrid Height="100" AutoGenerateColumns="True" Name="DataTable"/>
+        <Label Content="Таблица товаров"/>
+        <DataGrid Height="287" AutoGenerateColumns="True" x:Name="DataTable"/>
+        <GroupBox Height="115" Header="Новый товар" Width="790" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Width="224">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Label Content="Артикул:" Width="65"/>
+                        <Separator Width="20" Visibility="Hidden"/>
+                        <TextBox x:Name="txtVendor" TextWrapping="Wrap" Text="" Width="120"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Label Content="Название:" Width="65"/>
+                        <Separator Width="20" Visibility="Hidden"/>
+                        <TextBox x:Name="txtName" TextWrapping="Wrap" Text="" Width="120"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Label Content="Цена:" Width="65"/>
+                        <Separator Width="20" Visibility="Hidden"/>
+                        <TextBox x:Name="txtPrice" TextWrapping="Wrap" Text="" Width="120"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Width="430" >
+                    <Label Content="Описание:"/>
+                    <TextBox x:Name="txtDescription" TextWrapping="Wrap" AcceptsReturn="True" Text="" HorizontalAlignment="Left" Width="410" Height="60"/>
+                </StackPanel>
+                <Button x:Name="btnAdd" VerticalAlignment="Center" Height="40" Width="110" Click="btnAdd_Click" Content="Добавить"/>
+            </StackPanel>
+        </GroupBox>
     </StackPanel>
 </Window>
